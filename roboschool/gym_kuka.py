@@ -1,11 +1,10 @@
-from myroboschool.gym_urdf_robot_env import RoboschoolUrdfEnv
-from roboschool.scene_abstract import cpp_household
-from roboschool.scene_stadium import SinglePlayerStadiumScene
+from roboschool.gym_urdf_robot_env import RoboschoolUrdfEnv
+from roboschool.scene_abstract import SingleRobotEmptyScene
 import numpy as np
 
 class RoboschoolKuka(RoboschoolUrdfEnv):
     def create_single_player_scene(self):
-        return SinglePlayerStadiumScene(gravity=9.8, timestep=0.0165/8, frame_skip=8)   # 8 instead of 4 here
+        return SingleRobotEmptyScene(gravity=0.0, timestep=0.0165, frame_skip=1)
 
     def __init__(self):
         RoboschoolUrdfEnv.__init__(self,
@@ -16,16 +15,38 @@ class RoboschoolKuka(RoboschoolUrdfEnv):
             self_collision=True)
     
     def reset(self, close=False):
-        super(RoboschoolKuka, self).reset()
+        super(RoboschoolKuka, self)._reset()
 
     def render(self, mode, close=False):
-        super(RoboschoolKuka, self).render(mode, close)
+        super(RoboschoolKuka, self)._render(mode, close)
 
     def step(self, a):
-        return None, None, False, None
+        assert(not self.scene.multiplayer)
+        #self.apply_action(a)
+        self.jdict["lbr_iiwa_joint_1"].set_motor_torque(a[0])
+        self.jdict["lbr_iiwa_joint_2"].set_motor_torque(a[1])
+        self.jdict["lbr_iiwa_joint_3"].set_motor_torque(a[2])
+        self.scene.global_step()
+
+        #state = self.calc_state()  # sets self.to_target_vec
+        state = np.zeros(1)
+        self.rewards = []
+        reward = None
+        done = False
+        info = {}
+
+        self.HUD(state, a, done)
+
+        return state, reward, done, info
     
     def robot_specific_reset(self):
         pass
     
     def calc_state(self):
         return None
+
+    def camera_adjust(self):
+        x, y, z = self.fingertip.pose().xyz()
+        x *= 0.5
+        y *= 0.5
+        self.camera.move_and_look_at(0.3, 0.3, 0.3, x, y, z)
