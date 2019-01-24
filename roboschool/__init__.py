@@ -104,7 +104,7 @@ register(
 # Kuka
 
 register(
-    id='RoboschoolKuka-v1',
+    id='RoboschoolKuka-v0',
     entry_point='roboschool:RoboschoolKuka',
     max_episode_steps=1000,
     reward_threshold=3500.0,
