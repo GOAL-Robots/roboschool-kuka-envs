@@ -92,7 +92,6 @@ register(
     tags={ "pg_complexity": 200*1000000 },
     )
 
-
 # Multiplayer
 
 register(
@@ -100,6 +99,16 @@ register(
     entry_point='roboschool:RoboschoolPong',
     max_episode_steps=1000,
     tags={ "pg_complexity": 20*1000000 },
+    )
+
+# Kuka
+
+register(
+    id='RoboschoolKuka-v1',
+    entry_point='roboschool:RoboschoolKuka',
+    max_episode_steps=1000,
+    reward_threshold=3500.0,
+    tags={ "pg_complexity": 100*1000000 },
     )
 
 from roboschool.gym_pendulums import RoboschoolInvertedPendulum
@@ -115,3 +124,4 @@ from roboschool.gym_humanoid_flagrun import RoboschoolHumanoidFlagrun
 from roboschool.gym_humanoid_flagrun import RoboschoolHumanoidFlagrunHarder
 from roboschool.gym_atlas import RoboschoolAtlasForwardWalk
 from roboschool.gym_pong import RoboschoolPong
+from myroboschool.gym_kuka import RoboschoolKuka
