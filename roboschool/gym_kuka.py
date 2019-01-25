@@ -26,9 +26,9 @@ class RoboschoolKuka(RoboschoolUrdfEnv):
 
         for i,j in enumerate(a):
             self.jdict["lbr_iiwa_joint_%d"%(i+1)].set_servo_target(
-                    j, 2.0, 0.1, 100.0)
+                    j, 0.1, 1.0, 400.0)
 
-
+    
     def step(self, a):
         assert(not self.scene.multiplayer)
         
