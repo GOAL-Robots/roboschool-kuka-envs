@@ -20,15 +20,23 @@ class RoboschoolKuka(RoboschoolUrdfEnv):
     def render(self, mode, close=False):
         super(RoboschoolKuka, self)._render(mode, close)
 
+    def apply_action(self, a):
+
+        assert(len(a) == 7)
+
+        for i,j in enumerate(a):
+            self.jdict["lbr_iiwa_joint_%d"%(i+1)].set_servo_target(
+                    j, 2.0, 0.1, 100.0)
+
+
     def step(self, a):
         assert(not self.scene.multiplayer)
-        #self.apply_action(a)
-        self.jdict["lbr_iiwa_joint_1"].set_motor_torque(a[0])
-        self.jdict["lbr_iiwa_joint_2"].set_motor_torque(a[1])
-        self.jdict["lbr_iiwa_joint_3"].set_motor_torque(a[2])
+        
+        self.apply_action(a)
+        
         self.scene.global_step()
 
-        #state = self.calc_state()  # sets self.to_target_vec
+        state = self.calc_state()
         state = np.zeros(1)
         self.rewards = []
         reward = None

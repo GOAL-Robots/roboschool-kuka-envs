@@ -14,7 +14,7 @@ def demo_run():
 
         while 1:
 
-            obs, r, done, _ = env.step(np.random.rand(3))
+            obs, r, done, _ = env.step((np.pi/2.0)*np.random.rand(7))
 
             still_open = env.render("human")
 
