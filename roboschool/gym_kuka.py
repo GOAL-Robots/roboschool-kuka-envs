@@ -8,7 +8,7 @@ class RoboschoolKuka(RoboschoolUrdfEnv):
 
     def __init__(self):
         RoboschoolUrdfEnv.__init__(self,
-            "kuka_description/urdf/kuka.urdf",
+            "kuka_gripper_description/urdf/kuka_gripper.urdf",
             "pelvis",
             action_dim=30, obs_dim=70,
             fixed_base=False,
@@ -22,11 +22,23 @@ class RoboschoolKuka(RoboschoolUrdfEnv):
 
     def apply_action(self, a):
 
-        assert(len(a) == 7)
+        assert(len(a) == 9)
 
-        for i,j in enumerate(a):
+        kp = 0.1
+        kd = 1.0
+        vel = 400.0
+
+        for i,j in enumerate(a[:-2]):
             self.jdict["lbr_iiwa_joint_%d"%(i+1)].set_servo_target(
-                    j, 0.1, 1.0, 400.0)
+                    j, kp, kd, vel)
+        self.jdict["base_to_finger00_joint"].set_servo_target(
+                a[-2],  kp, kd, vel)
+        self.jdict["base_to_finger10_joint"].set_servo_target(
+                a[-2],  kp, kd, vel)
+        self.jdict["finger00_to_finger01_joint"].set_servo_target(
+                a[-1],  kp, kd, vel)
+        self.jdict["finger00_to_finger11_joint"].set_servo_target(
+                a[-1],  kp, kd, vel)
 
     
     def step(self, a):
