@@ -110,7 +110,6 @@ register(
     reward_threshold=3500.0,
     tags={ "pg_complexity": 100*1000000 },
     )
-
 from roboschool.gym_pendulums import RoboschoolInvertedPendulum
 from roboschool.gym_pendulums import RoboschoolInvertedPendulumSwingup
 from roboschool.gym_pendulums import RoboschoolInvertedDoublePendulum
@@ -125,3 +124,5 @@ from roboschool.gym_humanoid_flagrun import RoboschoolHumanoidFlagrunHarder
 from roboschool.gym_atlas import RoboschoolAtlasForwardWalk
 from roboschool.gym_pong import RoboschoolPong
 from roboschool.gym_kuka import RoboschoolKuka
+from roboschool.gym_kuka_env import RoboschoolKukaEnv
+

@@ -16,16 +16,18 @@ def demo_run():
 
     env = gym.make("RoboschoolKuka-v0")
 
-    obs = env.reset()
+    env1 = gym.make("RoboschoolKukaEnv-v0")
     
     t = 0
-    c = 0
     while 1:
-        if t%100 == 0:
-             c += 1
-        obs, r, done, _ = env.step(actions[c%5])
-        still_open = env.render("human")
-        t +=1
+        obs = env.reset()    
+        obs1 = env1.reset()    
+        c = 0
+        for t in range(100):
+            if t%20==0: a = np.random.rand(9)*np.pi/2
+            obs, r, done, _ = env.step(a)
+            still_open = env.render("human")
+
         
 
 

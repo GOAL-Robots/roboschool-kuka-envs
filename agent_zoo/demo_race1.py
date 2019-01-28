@@ -36,10 +36,10 @@ else:
         ("RoboschoolHumanoid-v1", PolHumanoid1),
         ("RoboschoolHumanoid-v1", PolHumanoid2),
         ]
+
     env_id, PolicyClass = possible_participants[ np.random.randint(len(possible_participants)) ]
     env = gym.make(env_id)
     env.unwrapped.multiplayer(env, game_server_guid=sys.argv[1], player_n=int(sys.argv[2]))
-
     pi = PolicyClass("mymodel", env.observation_space, env.action_space)
 
     while 1:

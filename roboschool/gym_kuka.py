@@ -1,33 +1,43 @@
 from roboschool.gym_urdf_robot_env import RoboschoolUrdfEnv
 from roboschool.scene_abstract import SingleRobotEmptyScene
 import numpy as np
+import os
+
 
 class RoboschoolKuka(RoboschoolUrdfEnv):
     def create_single_player_scene(self):
-        return SingleRobotEmptyScene(gravity=0.0, timestep=0.0165, frame_skip=1)
+        return SingleRobotEmptyScene(gravity=9.8, timestep=0.0165, frame_skip=1)
 
     def __init__(self):
-        RoboschoolUrdfEnv.__init__(self,
+        super(RoboschoolKuka, self).__init__(
             "kuka_gripper_description/urdf/kuka_gripper.urdf",
             "pelvis",
             action_dim=30, obs_dim=70,
             fixed_base=False,
             self_collision=True)
-    
+  
     def reset(self, close=False):
-        super(RoboschoolKuka, self)._reset()
+        super(RoboschoolKuka, self)._reset(pose_coords = [-0.8, 0, 0])
 
     def render(self, mode, close=False):
         super(RoboschoolKuka, self)._render(mode, close)
-
+        
+        # add table
+        self.urdf_table  = self.scene.cpp_world.load_urdf(
+            os.path.join(os.path.dirname(__file__), "models_robot",
+                "kuka_gripper_description/urdf/table.urdf"),
+            self.getPose(), True, True)
+        
     def apply_action(self, a):
 
         assert(len(a) == 9)
 
         kp = 0.1
         kd = 1.0
-        vel = 400.0
-
+        vel = 1.0
+    
+        a[-1] = np.minimum(a[-1], np.pi/2 - a[-2])
+        
         for i,j in enumerate(a[:-2]):
             self.jdict["lbr_iiwa_joint_%d"%(i+1)].set_servo_target(
                     j, kp, kd, vel)
