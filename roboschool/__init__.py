@@ -124,5 +124,4 @@ from roboschool.gym_humanoid_flagrun import RoboschoolHumanoidFlagrunHarder
 from roboschool.gym_atlas import RoboschoolAtlasForwardWalk
 from roboschool.gym_pong import RoboschoolPong
 from roboschool.gym_kuka import RoboschoolKuka
-from roboschool.gym_kuka_env import RoboschoolKukaEnv
 
