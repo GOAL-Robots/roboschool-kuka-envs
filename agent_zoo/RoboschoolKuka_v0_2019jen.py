@@ -15,13 +15,10 @@ actions = np.array([
 def demo_run():
 
     env = gym.make("RoboschoolKuka-v0")
-
-    env1 = gym.make("RoboschoolKukaEnv-v0")
     
     t = 0
     while 1:
         obs = env.reset()    
-        obs1 = env1.reset()    
         c = 0
         for t in range(100):
             if t%20==0: a = np.random.rand(9)*np.pi/2
