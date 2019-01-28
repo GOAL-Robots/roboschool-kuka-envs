@@ -36,9 +36,9 @@ class RoboschoolKuka(RoboschoolUrdfEnv):
         self.jdict["base_to_finger10_joint"].set_servo_target(
                 a[-2],  kp, kd, vel)
         self.jdict["finger00_to_finger01_joint"].set_servo_target(
-                a[-1],  kp, kd, vel)
-        self.jdict["finger00_to_finger11_joint"].set_servo_target(
-                a[-1],  kp, kd, vel)
+                -a[-1],  kp, kd, vel)
+        self.jdict["finger10_to_finger11_joint"].set_servo_target(
+                -a[-1],  kp, kd, 0.01*vel)
 
     
     def step(self, a):

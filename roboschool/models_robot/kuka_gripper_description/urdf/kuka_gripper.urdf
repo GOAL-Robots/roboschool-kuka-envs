@@ -264,14 +264,14 @@
         <visual>
             <origin rpy="0 0 0" xyz="0 0 0"/>
             <geometry>
-                <mesh filename="package://gripper_description/meshes/base.stl"/>
+                <mesh filename="package://kuka_gripper_description/meshes/base.stl"/>
             </geometry>
             <material name="Grey"/>
         </visual>
         <collision>
             <origin rpy="0 0 0" xyz="0 0 0"/>
             <geometry>
-                <mesh filename="package://gripper_description/meshes/base.stl"/>
+                <mesh filename="package://kuka_gripper_description/meshes/base.stl"/>
             </geometry>
         </collision>
     </link>
@@ -279,7 +279,7 @@
     <joint name="base_to_finger00_joint" type="revolute">
         <parent link="base"/>
         <child link="finger_00"/>
-        <origin rpy="0 0 0" xyz="0.023510971786833857 0 0"/>
+        <origin rpy="0 0 0" xyz="0.043510971786833857 0 0"/>
         <axis xyz="0 1 0"/>
         <limit effort="300" lower="0" upper="1.5707963267948966" velocity="10"/>
         <dynamics damping="0.5"/>
@@ -293,14 +293,14 @@
         <visual>
             <origin rpy="0 0 0" xyz="0 0 0"/>
             <geometry>
-                <mesh filename="package://gripper_description/meshes/finger_0.stl"/>
+                <mesh filename="package://kuka_gripper_description/meshes/finger_0.stl"/>
             </geometry>
             <material name="Grey"/>
         </visual>
         <collision>
             <origin rpy="0 0 0" xyz="0 0 0"/>
             <geometry>
-                <mesh filename="package://gripper_description/meshes/finger_0.stl"/>
+                <mesh filename="package://kuka_gripper_description/meshes/finger_0.stl"/>
             </geometry>
         </collision>
     </link> 
@@ -322,14 +322,14 @@
         <visual>
             <origin rpy="0 0 0" xyz="0 0 0"/>
             <geometry>
-                <mesh filename="package://gripper_description/meshes/finger_1.stl"/>
+                <mesh filename="package://kuka_gripper_description/meshes/finger_1.stl"/>
             </geometry>
             <material name="Grey"/>
         </visual>
         <collision>
             <origin rpy="0 0 0" xyz="0 0 0"/>
             <geometry>
-                <mesh filename="package://gripper_description/meshes/finger_1.stl"/>
+                <mesh filename="package://kuka_gripper_description/meshes/finger_1.stl"/>
             </geometry>
         </collision>
     </link> 
@@ -342,7 +342,7 @@
     <joint name="base_to_finger10_joint" type="revolute">
         <parent link="base"/>
         <child link="finger_10"/>
-        <origin rpy="0 0 3.141592653589793" xyz="-0.023510971786833857 0 0"/>
+        <origin rpy="0 0 3.141592653589793" xyz="-0.043510971786833857 0 0"/>
         <axis xyz="0 1 0"/>
         <limit effort="300" lower="0" upper="1.5707963267948966" velocity="10"/>
         <dynamics damping="0.5"/>
@@ -356,14 +356,14 @@
         <visual>
             <origin rpy="0 0 0" xyz="0 0 0"/>
             <geometry>
-                <mesh filename="package://gripper_description/meshes/finger_0.stl"/>
+                <mesh filename="package://kuka_gripper_description/meshes/finger_0.stl"/>
             </geometry>
             <material name="Grey"/>
         </visual>
         <collision>
             <origin rpy="0 0 0" xyz="0 0 0"/>
             <geometry>
-                <mesh filename="package://gripper_description/meshes/finger_0.stl"/>
+                <mesh filename="package://kuka_gripper_description/meshes/finger_0.stl"/>
             </geometry>
         </collision>
     </link> 
@@ -385,14 +385,14 @@
         <visual>
             <origin rpy="0 0 0" xyz="0 0 0"/>
             <geometry>
-                <mesh filename="package://gripper_description/meshes/finger_1.stl"/>
+                <mesh filename="package://kuka_gripper_description/meshes/finger_1.stl"/>
             </geometry>
             <material name="Grey"/>
         </visual>
         <collision>
             <origin rpy="0 0 0" xyz="0 0 0"/>
             <geometry>
-                <mesh filename="package://gripper_description/meshes/finger_1.stl"/>
+                <mesh filename="package://kuka_gripper_description/meshes/finger_1.stl"/>
             </geometry>
         </collision>
     </link> 
