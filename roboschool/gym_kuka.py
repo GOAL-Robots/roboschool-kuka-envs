@@ -1,6 +1,10 @@
 from roboschool.gym_urdf_robot_env import RoboschoolUrdfEnv
 from roboschool.scene_abstract import SingleRobotEmptyScene
+from roboschool.scene_abstract import cpp_household
+
 import numpy as np
+import copy
+import sys
 import os
 
 
@@ -17,16 +21,36 @@ class RoboschoolKuka(RoboschoolUrdfEnv):
             self_collision=True)
   
     def reset(self, close=False):
-        super(RoboschoolKuka, self)._reset(pose_coords = [-0.8, 0, 0])
+        super(RoboschoolKuka, self)._reset()
+
+    def get_contacts(self):
+        
+        contact_dict = {}
+
+        for part in self.urdf.parts:
+            name = part.name
+            contacts = part.contact_list()
+            if len(contacts)>0:
+                contact_dict[name] = [contact.name 
+                        for contact in contacts]
+
+        return contact_dict
 
     def render(self, mode, close=False):
         super(RoboschoolKuka, self)._render(mode, close)
         
+
+        
+        pose_robot = cpp_household.Pose()
+        pose_robot.set_xyz(-.8, 0, 0)
+        self.urdf.set_pose(pose_robot)
+
         # add table
+        pose_table = cpp_household.Pose()
         self.urdf_table  = self.scene.cpp_world.load_urdf(
             os.path.join(os.path.dirname(__file__), "models_robot",
                 "kuka_gripper_description/urdf/table.urdf"),
-            self.getPose(), True, True)
+            pose_table, True, True)
         
     def apply_action(self, a):
 
@@ -34,7 +58,7 @@ class RoboschoolKuka(RoboschoolUrdfEnv):
 
         kp = 0.1
         kd = 1.0
-        vel = 1.0
+        vel = 400
     
         a[-1] = np.minimum(a[-1], np.pi/2 - a[-2])
         
@@ -44,11 +68,11 @@ class RoboschoolKuka(RoboschoolUrdfEnv):
         self.jdict["base_to_finger00_joint"].set_servo_target(
                 a[-2],  kp, kd, vel)
         self.jdict["base_to_finger10_joint"].set_servo_target(
-                a[-2],  kp, kd, vel)
+                 a[-2],  kp, kd, vel)
         self.jdict["finger00_to_finger01_joint"].set_servo_target(
-                -a[-1],  kp, kd, vel)
+                 -a[-1],  kp, kd, vel)
         self.jdict["finger10_to_finger11_joint"].set_servo_target(
-                -a[-1],  kp, kd, 0.01*vel)
+                 -a[-1],  kp, kd, 0.01*vel)
 
     
     def step(self, a):

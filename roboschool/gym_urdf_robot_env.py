@@ -34,19 +34,13 @@ class RoboschoolUrdfEnv(gym.Env):
         self.np_random, seed = gym.utils.seeding.np_random(seed)
         return [seed]
 
-    def getPose(self):
-        return cpp_household.Pose()
-
-    def _reset(self, pose_coords=None):
+    def _reset(self):
         if self.scene is None:
             self.scene = self.create_single_player_scene()
         if not self.scene.multiplayer:
             self.scene.episode_restart()
 
         pose = cpp_household.Pose()
-        if pose_coords is not None:
-            pose.set_xyz(*pose_coords)
-
         #import time
         #t1 = time.time()
         self.urdf = self.scene.cpp_world.load_urdf(
