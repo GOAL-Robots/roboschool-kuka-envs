@@ -11,7 +11,7 @@ def demo_run():
     while 1:
         obs = env.reset()    
         for t in range(1000):
-            if t%20==0: actions = np.random.uniform(-1,1,[9]) * np.pi/2.0 
+            if t%200==0: actions = np.random.uniform(-1,1,[9]) * np.pi/2.0 
             obs, r, done, _ = env.step(actions)
             still_open = env.render("human")
 
