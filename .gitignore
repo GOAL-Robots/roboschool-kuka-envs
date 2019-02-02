@@ -12,4 +12,6 @@ roboschool/robot-test-tool_d
 *.dylib
 *.so
 *.swp
+**/.tags
+**/*sources
 __pycache__
