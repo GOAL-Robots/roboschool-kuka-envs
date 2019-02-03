@@ -35,6 +35,7 @@ class RoboschoolUrdfEnv(gym.Env):
         return [seed]
 
     def _reset(self):
+       
         if self.scene is None:
             self.scene = self.create_single_player_scene()
         if not self.scene.multiplayer:
@@ -79,6 +80,7 @@ class RoboschoolUrdfEnv(gym.Env):
         #print("ordered_joints", len(self.ordered_joints))
         self.robot_specific_reset()
         self.cpp_robot.query_position()
+
         s = self.calc_state()    # optimization: calc_state() can calculate something in self.* for calc_potential() to use
         self.potential = self.calc_potential()
         self.camera = self.scene.cpp_world.new_camera_free_float(self.VIDEO_W, self.VIDEO_H, "video_camera")

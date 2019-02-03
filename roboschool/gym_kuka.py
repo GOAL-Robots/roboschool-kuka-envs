@@ -9,8 +9,10 @@ import os
 
 
 class RoboschoolKuka(RoboschoolUrdfEnv):
+    
     def create_single_player_scene(self):
-        return SingleRobotEmptyScene(gravity=9.8, timestep=0.0165, frame_skip=1)
+        return SingleRobotEmptyScene(gravity=9.8, 
+                timestep=0.0165, frame_skip=1)
 
     def __init__(self):
         super(RoboschoolKuka, self).__init__(
@@ -19,9 +21,6 @@ class RoboschoolKuka(RoboschoolUrdfEnv):
             action_dim=30, obs_dim=70,
             fixed_base=False,
             self_collision=True)
-  
-    def reset(self, close=False):
-        super(RoboschoolKuka, self)._reset()
 
     def get_contacts(self):
         
@@ -35,15 +34,22 @@ class RoboschoolKuka(RoboschoolUrdfEnv):
                         for contact in contacts]
 
         return contact_dict
-
-    def render(self, mode, close=False):
-        super(RoboschoolKuka, self)._render(mode, close)
+    
+    def robot_specific_reset(self):
         
+        try:
+            self.count += 1 
+        except AttributeError:
+            self.count = 0
 
-        
+        if self.count % 2 == 0:
+            q = 0.8
+        else:
+            q = -0.8
+ 
         pose_robot = cpp_household.Pose()
-        pose_robot.set_xyz(-.8, 0, 0)
-        self.urdf.set_pose(pose_robot)
+        pose_robot.set_xyz(q, 0, 0)
+        self.cpp_robot.set_pose_and_speed(pose_robot, 0,0,0)
 
         # add table
         pose_table = cpp_household.Pose()
@@ -75,7 +81,7 @@ class RoboschoolKuka(RoboschoolUrdfEnv):
                  -a[-1],  kp, kd, 0.01*vel)
 
     
-    def step(self, a):
+    def _step(self, a):
         assert(not self.scene.multiplayer)
         
         self.apply_action(a)
@@ -93,14 +99,11 @@ class RoboschoolKuka(RoboschoolUrdfEnv):
 
         return state, reward, done, info
     
-    def robot_specific_reset(self):
-        pass
-    
     def calc_state(self):
         return None
 
     def camera_adjust(self):
-        x, y, z = self.fingertip.pose().xyz()
+        x, y, z = self.cpp_robot.root_part.pose().xyz()
         x *= 0.5
         y *= 0.5
-        self.camera.move_and_look_at(0.3, 0.3, 0.3, x, y, z)
+        self.camera.move_and_look_at(0.3, 0.9, 0.3, x, y, z)

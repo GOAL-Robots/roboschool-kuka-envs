@@ -16,7 +16,9 @@
             <geometry>
                 <mesh filename="package://kuka_gripper_description/meshes/table.stl"/>
             </geometry>
-            <material name="Brown"/>
+            <material name="Brown">
+                <texture filename="package://kuka_gripper_description/meshes/wood.jpeg"/>
+            </material>
         </visual>
         <collision>
             <origin rpy="0 0 0" xyz="0 0 0"/>

@@ -18,12 +18,12 @@ def demo_run():
     
     while 1:
         obs = env.reset()    
+        still_open = env.render("human")
         c = 0
-        for t in range(1000):
+        for t in range(100):
             if t%20==0: c += 1 
             obs, r, done, _ = env.step(actions[c%5])
             still_open = env.render("human")
-
         
 
 
