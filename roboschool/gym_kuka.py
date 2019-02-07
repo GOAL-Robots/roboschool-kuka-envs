@@ -36,19 +36,9 @@ class RoboschoolKuka(RoboschoolUrdfEnv):
         return contact_dict
     
     def robot_specific_reset(self):
-        
-        try:
-            self.count += 1 
-        except AttributeError:
-            self.count = 0
-
-        if self.count % 2 == 0:
-            q = 0.8
-        else:
-            q = -0.8
- 
+         
         pose_robot = cpp_household.Pose()
-        pose_robot.set_xyz(q, 0, 0)
+        pose_robot.set_xyz(-0.8, 0, 0)
         self.cpp_robot.set_pose_and_speed(pose_robot, 0,0,0)
 
         # add table
@@ -58,6 +48,14 @@ class RoboschoolKuka(RoboschoolUrdfEnv):
                 "kuka_gripper_description/urdf/table.urdf"),
             pose_table, True, True)
         
+        # add cube
+        pose_cube = cpp_household.Pose()
+        pose_cube.set_xyz(0.0, 0, 0.482)
+        self.urdf_cube  = self.scene.cpp_world.load_urdf(
+            os.path.join(os.path.dirname(__file__), "models_robot",
+                "kuka_gripper_description/urdf/cube.urdf"),
+            pose_cube, False, True)
+                
     def apply_action(self, a):
 
         assert(len(a) == 9)

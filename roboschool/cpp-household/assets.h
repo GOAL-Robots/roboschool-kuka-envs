@@ -25,7 +25,7 @@ struct Material {
 	uint32_t texture = 0;
 	bool texture_loaded = false;
 	std::string diffuse_texture_image_fn;
-	uint32_t diffuse_color  = 0x00FF00;
+	uint32_t diffuse_color  = 0xFFFFFF;
 	uint32_t multiply_color = 0xFFFFFF;
 };
 

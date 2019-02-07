@@ -2,6 +2,7 @@
 #include <QtWidgets/QApplication>
 #include <QtCore/QDir>
 #include <QtCore/QElapsedTimer>
+#include <fstream>
 
 namespace Household {
 
@@ -303,7 +304,7 @@ void World::load_robot_shapes(const shared_ptr<Robot>& robot)
 			char klass_name[1024];
 			snprintf(klass_name, sizeof(klass_name), "%s:%03i", robot->original_urdf_name.c_str(), link_n);
 			//fprintf(stderr, "allocating class=='%s' link==%i geom=%i fn=='%s'\n", klass_name, link_n, geom, fn.c_str());
-			part->klass = klass_cache_find_or_create(klass_name);
+            part->klass = klass_cache_find_or_create(klass_name);
 		}
 
 		btVector3 pos;
