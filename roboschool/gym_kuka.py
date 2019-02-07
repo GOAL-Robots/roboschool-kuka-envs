@@ -22,19 +22,29 @@ class RoboschoolKuka(RoboschoolUrdfEnv):
             fixed_base=False,
             self_collision=True)
 
+
     def get_contacts(self):
         
         contact_dict = {}
 
         for part in self.urdf.parts:
             name = part.name
-            contacts = part.contact_list()
+            contacts = [contact for contact 
+                    in part.contact_list()
+                    if not contact.name in self.robot_parts_names]
+            
             if len(contacts)>0:
                 contact_dict[name] = [contact.name 
                         for contact in contacts]
-
         return contact_dict
-    
+   
+    def _reset(self):
+        s = super(RoboschoolKuka, self)._reset()
+        self.robot_parts_names = [part.name for part 
+                in self.urdf.parts]
+        print(self.robot_parts_names)
+        return s
+
     def robot_specific_reset(self):
          
         pose_robot = cpp_household.Pose()
@@ -87,18 +97,15 @@ class RoboschoolKuka(RoboschoolUrdfEnv):
         self.scene.global_step()
 
         state = self.calc_state()
-        state = np.zeros(1)
         self.rewards = []
         reward = None
         done = False
         info = {}
 
-        self.HUD(state, a, done)
-
         return state, reward, done, info
     
     def calc_state(self):
-        return None
+        return (self.get_contacts(),)
 
     def camera_adjust(self):
         x, y, z = self.cpp_robot.root_part.pose().xyz()
