@@ -110,4 +110,4 @@ class RoboschoolKuka(RoboschoolUrdfEnv):
         x, y, z = self.cpp_robot.root_part.pose().xyz()
         x *= 0.5
         y *= 0.5
-        self.camera.move_and_look_at(0.3, 0.9, 0.3, x, y, z)
+        self.camera.move_and_look_at(0.3, 0.9, 1.5, x, y, z)
