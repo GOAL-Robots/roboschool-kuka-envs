@@ -537,7 +537,7 @@ void ContextViewport::paint(float user_x, float user_y, float user_z, float whee
 	cx->program_tex->setUniformValue(cx->location_input_matrix_modelview_inverse_transpose, modelview_inverse_transpose);
 	if (~view_options & VIEW_CAMERA_BIT) {
 		glBindVertexArray(cx->ruler_vao->handle);
-        CHECK_GL_ERROR; // error often here, when context different, also set if (1) above to always enter this code block
+		CHECK_GL_ERROR; // error often here, when context different, also set if (1) above to always enter this code block
 		glDrawArrays(GL_LINES, 0, sizeof(line_vertex)/sizeof(float)/3);
 		glBindVertexArray(0);
 	}
