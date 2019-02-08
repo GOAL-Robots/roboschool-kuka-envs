@@ -36,11 +36,11 @@ void Camera::camera_render(const shared_ptr<SimpleRender::Context>& cx, bool ren
 	int oh = camera_res_h << RGB_OVERSAMPLING;
 
 	cx->glcx->makeCurrent(cx->surf);
-	CHECK_GL_ERROR;
+	//CHECK_GL_ERROR;
 
 	if (!viewport || viewport->W!=ow || viewport->H!=oh) {
 		viewport.reset(new SimpleRender::ContextViewport(cx, ow, oh, camera_near, camera_far, camera_hfov));
-		CHECK_GL_ERROR;
+		//CHECK_GL_ERROR;
 	}
 
 	double rgb_depth_render = 0;
@@ -53,11 +53,11 @@ void Camera::camera_render(const shared_ptr<SimpleRender::Context>& cx, bool ren
 	timer.start();
 
 	viewport->paint(0, 0, 0, 0, 0, 0, this, 65535, VIEW_CAMERA_BIT, 0); // PAINT HERE
-	CHECK_GL_ERROR;
+	//CHECK_GL_ERROR;
 	viewport->hud_update_start();
 	viewport->hud_print_score(score);
 	viewport->hud_update_finish();
-	CHECK_GL_ERROR;
+	//CHECK_GL_ERROR;
 
 	rgb_depth_render = timer.nsecsElapsed()/1000000.0;
 

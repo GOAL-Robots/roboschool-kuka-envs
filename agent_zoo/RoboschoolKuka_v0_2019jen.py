@@ -22,12 +22,10 @@ img = ax.imshow(np.zeros([2,2]))
 
 def demo_run():
 
-    env = gym.make("RoboschoolKuka-v0")
     
+    env = gym.make("RoboschoolKuka-v0")
     while 1:
         obs = env.reset()    
-        c = 0
-        input("trial")
         for t in range(1000):
             if         t <  5:
                 a = actions[0].copy()
@@ -51,12 +49,12 @@ def demo_run():
                     print("{} : {}".format(body_part, conts))
             else:
                 print("--")
-            
-            #still_open = env.render("human")
-            still_open = env.render("rgb_array")
-            if t%3 == 0 or t == 999:
-                img.set_array(still_open.reshape(400, 600, 3)) 
-                plt.pause(0.1)
+            ##still_open = env.render("human")
+            rgb = env.render("rgb_array")
+            if t%3 == 0 or t == 999 :
+                if rgb is not None:  
+                    img.set_array(rgb) 
+                    plt.pause(0.1)
 
 
 if __name__=="__main__":

@@ -77,7 +77,6 @@ class RoboschoolUrdfEnv(gym.Env):
             j.power_coef, j.max_velocity = j.limits()[2:4]
             self.ordered_joints.append(j)
             self.jdict[j.name] = j
-        #print("ordered_joints", len(self.ordered_joints))
         self.robot_specific_reset()
         self.cpp_robot.query_position()
 

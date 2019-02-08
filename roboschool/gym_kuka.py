@@ -21,8 +21,7 @@ class RoboschoolKuka(RoboschoolUrdfEnv):
             action_dim=30, obs_dim=70,
             fixed_base=False,
             self_collision=True)
-
-
+    
     def get_contacts(self):
         
         contact_dict = {}
@@ -42,8 +41,8 @@ class RoboschoolKuka(RoboschoolUrdfEnv):
         s = super(RoboschoolKuka, self)._reset()
         self.robot_parts_names = [part.name for part 
                 in self.urdf.parts]
-        print(self.robot_parts_names)
         return s
+
 
     def robot_specific_reset(self):
          
@@ -105,7 +104,7 @@ class RoboschoolKuka(RoboschoolUrdfEnv):
         return state, reward, done, info
     
     def calc_state(self):
-        return (self.get_contacts(),)
+        return (self.get_contacts(), )
 
     def camera_adjust(self):
         x, y, z = self.cpp_robot.root_part.pose().xyz()
