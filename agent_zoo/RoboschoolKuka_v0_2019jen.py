@@ -68,7 +68,6 @@ def demo_run():
         [0,  0.29,   0,  -0.95,  1.0,   0,    0,   .25,   .3]])*np.pi/2.0
 
     env = gym.make("RoboschoolKuka-v0")
-    control_me = PygletInteractiveWindow(env.unwrapped)
 
 
     while 1:
@@ -96,13 +95,9 @@ def demo_run():
             else:
                 print("--")
            
-            rgb_image = env.render("rgb_array")
+            still_open = env.render("human")
+            if not still_open : return
         
-            control_me.imshow(rgb_image)
-            control_me.each_frame()
-            if control_me.still_open==False: return 
-
-
 if __name__=="__main__":
 
     demo_run()
