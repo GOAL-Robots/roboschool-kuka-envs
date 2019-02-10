@@ -10,57 +10,7 @@ import copy
 import sys
 import os
 
-# ------------------------------------------------------------------------------------
-
-#
-# This opens a third-party window (not test window), shows rendered 
-# chase camera, allows to control humanoid using keyboard (in a different way)
-#
-
-class PygletInteractiveWindow(pw.Window):
-    def __init__(self, env):
-        pw.Window.__init__(self, width=600, height=400, vsync=False, resizable=True)
-        self.theta = 0
-        self.still_open = True
-
-        @self.event
-        def on_close():
-            self.still_open = False
-
-        @self.event
-        def on_resize(width, height):
-            self.win_w = width
-            self.win_h = height
-
-        self.keys = {}
-        self.human_pause = False
-        self.human_done = False
-
-    def imshow(self, arr):
-        H, W, C = arr.shape
-        assert C==3
-        image = pyglet.image.ImageData(W, H, 'RGB', arr.tobytes(), pitch=W*-3)
-        self.clear()
-        self.switch_to()
-        self.dispatch_events()
-        texture = image.get_texture()
-        gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MAG_FILTER, gl.GL_NEAREST)
-        texture.width  = W
-        texture.height = H
-        texture.blit(0, 0, width=self.win_w, height=self.win_h)
-        self.flip()
-
-    def on_key_press(self, key, modifiers):
-        self.keys[key] = +1
-        if key==pwk.ESCAPE: self.still_open = False
-
-    def on_key_release(self, key, modifiers):
-        self.keys[key] = 0
-
-    def each_frame(self):
-        self.theta += 0.05 * (self.keys.get(pwk.LEFT, 0) - self.keys.get(pwk.RIGHT, 0))
-
-# ------------------------------------------------------------------------------------
+#------------------------------------------------------------------------------
 
 
 class RoboschoolKuka(RoboschoolUrdfEnv):
@@ -77,7 +27,6 @@ class RoboschoolKuka(RoboschoolUrdfEnv):
             fixed_base=False,
             self_collision=True)
         
-        self.rgb_window = None
         
     def get_contacts(self):
         
@@ -99,19 +48,6 @@ class RoboschoolKuka(RoboschoolUrdfEnv):
         self.robot_parts_names = [part.name for part 
                 in self.urdf.parts]
         return s
-
-    def _render(self, mode, close):    
-        self.rgb_image = super(RoboschoolKuka, self).\
-            _render("rgb_array", close)
-        if mode=="human":
-            if self.rgb_window is None:
-                self.rgb_window = PygletInteractiveWindow(self)
-
-            self.rgb_window.imshow(self.rgb_image)
-            self.rgb_window.each_frame()
-            
-            return self.rgb_window.still_open
-        return True
 
     def robot_specific_reset(self):
          
