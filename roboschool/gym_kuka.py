@@ -1,8 +1,6 @@
 from roboschool.gym_urdf_robot_env import RoboschoolUrdfEnv
 from roboschool.scene_abstract import SingleRobotEmptyScene
 from roboschool.scene_abstract import cpp_household
-import pyglet, pyglet.window as pw, pyglet.window.key as pwk
-from pyglet import gl
 
 
 import numpy as np
@@ -15,6 +13,10 @@ import os
 
 class RoboschoolKuka(RoboschoolUrdfEnv):
     
+    EYE_W = 60
+    EYE_H = 40
+
+    
     def create_single_player_scene(self):
         return SingleRobotEmptyScene(gravity=9.8, 
                 timestep=0.0165, frame_skip=1)
@@ -26,6 +28,7 @@ class RoboschoolKuka(RoboschoolUrdfEnv):
             action_dim=30, obs_dim=70,
             fixed_base=False,
             self_collision=True)
+        self.rendered_rgb_eye = np.zeros([self.EYE_H, self.EYE_W, 3], dtype=np.uint8)
         
         
     def get_contacts(self):
@@ -47,7 +50,16 @@ class RoboschoolKuka(RoboschoolUrdfEnv):
         s = super(RoboschoolKuka, self)._reset()
         self.robot_parts_names = [part.name for part 
                 in self.urdf.parts]
+        self.eye = self.scene.cpp_world.new_camera_free_float(self.EYE_W, self.EYE_H, "eye")
         return s
+
+    def _render(self, mode, close):
+        render_res = super(RoboschoolKuka, self)._render(mode, close)
+        self.eye_adjust() 
+        rgb_eye, _, _, _, _ = self.eye.render(False, False, False) # render_depth, render_labeling, print_timing)
+        self.rendered_rgb_eye = np.fromstring(rgb_eye, dtype=np.uint8).reshape( (self.EYE_H,self.EYE_W,3) )
+        
+        return render_res
 
     def robot_specific_reset(self):
          
@@ -91,7 +103,6 @@ class RoboschoolKuka(RoboschoolUrdfEnv):
                  -a[-1],  kp, kd, vel)
         self.jdict["finger10_to_finger11_joint"].set_servo_target(
                  -a[-1],  kp, kd, 0.01*vel)
-
     
     def _step(self, a):
         assert(not self.scene.multiplayer)
@@ -109,10 +120,15 @@ class RoboschoolKuka(RoboschoolUrdfEnv):
         return state, reward, done, info
     
     def calc_state(self):
-        return (self.get_contacts(), )
+        return (self.get_contacts(), self.rendered_rgb_eye)
 
     def camera_adjust(self): 
         x, y, z = self.cpp_robot.root_part.pose().xyz()
         y += 0.5
         z += 0.3
         self.camera.move_and_look_at(.7, -.7, .8, x, y, z)
+    
+    def eye_adjust(self): 
+        x, y, z = self.cpp_robot.root_part.pose().xyz()
+        y += 0.5
+        self.eye.move_and_look_at(.2, -.2, 1., x, y, z)

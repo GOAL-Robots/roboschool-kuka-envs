@@ -3,6 +3,9 @@ from OpenGL import GLU
 import numpy as np
 import roboschool
 import time
+from PIL import Image
+
+
 
 
 
@@ -17,7 +20,7 @@ def demo_run():
         [0,  0.29,   0,  -0.95,  1.0,   0,    0,   .25,   .3]])*np.pi/2.0
 
 
-    while 1:
+    for k in range(1):
         env = gym.make("RoboschoolKuka-v0")
         obs = env.reset()    
         for t in range(1000):
@@ -36,14 +39,21 @@ def demo_run():
             
             state, r, done, _ = env.step(a)
            
-            contacts, = state
+            rgb_camera = env.render("rgb_array")
+            contacts, rgb_eye = state
+
+            camera_im = Image.fromarray(rgb_camera)
+            eye_im = Image.fromarray(rgb_eye)
+            
+            camera_im.save("camera_{:04d}.jpg".format(t))
+            eye_im.save("eye_{:04d}.jpg".format(t))
+
             if len(contacts)>0:
                 for body_part, conts in contacts.items():
                     print("{} : {}".format(body_part, conts))
             else:
                 print("--")
            
-            still_open = env.render("rgb_array")
              
 if __name__=="__main__":
 
