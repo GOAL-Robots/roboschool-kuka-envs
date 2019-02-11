@@ -36,8 +36,8 @@ class RoboschoolUrdfEnv(gym.Env):
 
     def _reset(self):
        
-        if self.scene is None:
-            self.scene = self.create_single_player_scene()
+        #if self.scene is None:
+        self.scene = self.create_single_player_scene()
         if not self.scene.multiplayer:
             self.scene.episode_restart()
 
