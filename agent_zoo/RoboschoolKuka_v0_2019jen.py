@@ -18,10 +18,10 @@ def demo_run():
         [0,    0,    0,  -1.0,  1.0,    0,    0,   .8,    .8],   
         [0,  0.29,   0,  -0.95,  1.0,   0,    0,   .8,    .8],   
         [0,  0.29,   0,  -0.95,  1.0,   0,    0,   .25,   .3]])*np.pi/2.0
+        
+    env = gym.make("RoboschoolKuka-v0")
 
-
-    for k in range(1):
-        env = gym.make("RoboschoolKuka-v0")
+    for k in range(10):
         obs = env.reset()    
         for t in range(1000):
             if         t <  5:
@@ -42,8 +42,7 @@ def demo_run():
             still_open = env.render("human")
             contacts, rgb_eye = (info_["contacts"], info_["rgb_eye"])
 
-            eye_im = Image.fromarray(rgb_eye)
-            
+            eye_im = Image.fromarray(rgb_eye)      
             eye_im.save("eye_{:04d}.jpg".format(t))
 
             if len(contacts)>0:
