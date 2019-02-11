@@ -20,6 +20,9 @@ def demo_run():
         [0,  0.29,   0,  -0.95,  1.0,   0,    0,   .25,   .3]])*np.pi/2.0
         
     env = gym.make("RoboschoolKuka-v0")
+    env.unwrapped.EYE_W=32
+    env.unwrapped.EYE_H=32
+
 
     for k in range(10):
         obs = env.reset()    
@@ -50,6 +53,8 @@ def demo_run():
                     print("{} : {}".format(body_part, conts))
             else:
                 print("--")
+           
+            #if not still_open: return
            
              
 if __name__=="__main__":
