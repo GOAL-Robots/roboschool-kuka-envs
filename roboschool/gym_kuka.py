@@ -4,31 +4,97 @@ from roboschool.scene_abstract import cpp_household
 
 
 import numpy as np
+import gym
 import copy
 import sys
 import os
+import pyglet, pyglet.window as pw, pyglet.window.key as pwk
+from pyglet import gl
+
+#
+# This opens a third-party window (not test window), shows rendered chase camera, allows to control humanoid
+# using keyboard (in a different way)
+#
+
+class PygletInteractiveWindow(pw.Window):
+    def __init__(self, env, width, height):
+        pw.Window.__init__(self, width=width, height=height, vsync=False, resizable=True)
+        self.theta = 0
+        self.still_open = True
+
+        @self.event
+        def on_close():
+            self.still_open = False
+
+        @self.event
+        def on_resize(width, height):
+            self.win_w = width
+            self.win_h = height
+
+        self.keys = {}
+        self.human_pause = False
+        self.human_done = False
+
+    def imshow(self, arr):
+        H, W, C = arr.shape
+        assert C==3
+        image = pyglet.image.ImageData(W, H, 'RGB', arr.tobytes(), pitch=W*-3)
+        self.clear()
+        self.switch_to()
+        self.dispatch_events()
+        texture = image.get_texture()
+        gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MAG_FILTER, gl.GL_NEAREST)
+        texture.width  = W
+        texture.height = H
+        texture.blit(0, 0, width=self.win_w, height=self.win_h)
+        self.flip()
+
+    def on_key_press(self, key, modifiers):
+        self.keys[key] = +1
+        if key==pwk.ESCAPE: self.still_open = False
+
+    def on_key_release(self, key, modifiers):
+        self.keys[key] = 0
+
+    def each_frame(self):
+        self.theta += 0.05 * (self.keys.get(pwk.LEFT, 0) - self.keys.get(pwk.RIGHT, 0))
+
 
 #------------------------------------------------------------------------------
 
-
 class RoboschoolKuka(RoboschoolUrdfEnv):
     
-    EYE_W = 60
-    EYE_H = 40
+    EYE_W = 200
+    EYE_H = 200
+    EYE_SHOW = True
 
-    
     def create_single_player_scene(self):
         return SingleRobotEmptyScene(gravity=9.8, 
                 timestep=0.0165, frame_skip=1)
 
     def __init__(self):
+        action_dim=9
+        obs_dim=11*3
+
         super(RoboschoolKuka, self).__init__(
             "kuka_gripper_description/urdf/kuka_gripper.urdf",
             "pelvis",
-            action_dim=30, obs_dim=70,
+            action_dim=action_dim, obs_dim=obs_dim,
             fixed_base=False,
-            self_collision=True)
+            self_collision=True) 
+
+        fixed_base=False
+        self_collision=True
+
+        high = np.pi*np.ones([action_dim])
+        self.action_space = gym.spaces.Box(-high, high)
+        high = np.inf*np.ones([obs_dim])
+        self.observation_space = gym.spaces.Box(-high, high)
+
         self.rendered_rgb_eye = np.zeros([self.EYE_H, self.EYE_W, 3], dtype=np.uint8)
+        
+        if self.EYE_SHOW:
+            self.eye_window = PygletInteractiveWindow(self, self.EYE_W, self.EYE_H)
         
         
     def get_contacts(self):
@@ -49,7 +115,7 @@ class RoboschoolKuka(RoboschoolUrdfEnv):
     def _reset(self):
         s = super(RoboschoolKuka, self)._reset()
         self.robot_parts_names = [part.name for part 
-                in self.urdf.parts]
+                in self.cpp_robot.parts]
         self.eye = self.scene.cpp_world.new_camera_free_float(self.EYE_W, self.EYE_H, "eye")
         return s
 
@@ -59,6 +125,10 @@ class RoboschoolKuka(RoboschoolUrdfEnv):
         rgb_eye, _, _, _, _ = self.eye.render(False, False, False) # render_depth, render_labeling, print_timing)
         self.rendered_rgb_eye = np.fromstring(rgb_eye, dtype=np.uint8).reshape( (self.EYE_H,self.EYE_W,3) )
         
+        if self.EYE_SHOW:
+            self.eye_window.imshow(self.rendered_rgb_eye)
+            self.eye_window.each_frame()
+   
         return render_res
 
     def robot_specific_reset(self):
@@ -112,15 +182,23 @@ class RoboschoolKuka(RoboschoolUrdfEnv):
         self.scene.global_step()
 
         state = self.calc_state()
-        self.rewards = []
-        reward = None
+        self.rewards = [ self.get_contacts()]
+        reward = np.sum([ len(contacts) 
+            for part, contacts in self.get_contacts().items() 
+                if part != "table"])
+        
+        reward -=  np.sum([ len(contacts) 
+            for part, contacts in self.get_contacts().items() 
+                if part == "table"])
+
         done = False
-        info = {}
+        info = {"contacts":self.get_contacts(), "rgb_eye": self.rendered_rgb_eye}
 
         return state, reward, done, info
     
     def calc_state(self):
-        return (self.get_contacts(), self.rendered_rgb_eye)
+        state = np.hstack([part.pose().xyz() for part in  self.cpp_robot.parts])
+        return state 
 
     def camera_adjust(self): 
         x, y, z = self.cpp_robot.root_part.pose().xyz()
@@ -129,6 +207,5 @@ class RoboschoolKuka(RoboschoolUrdfEnv):
         self.camera.move_and_look_at(.7, -.7, .8, x, y, z)
     
     def eye_adjust(self): 
-        x, y, z = self.cpp_robot.root_part.pose().xyz()
-        y += 0.5
-        self.eye.move_and_look_at(.2, -.2, 1., x, y, z)
+
+        self.eye.move_and_look_at(0, 0, 1.5, 0, 0, 0)

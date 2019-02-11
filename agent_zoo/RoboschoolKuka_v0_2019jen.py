@@ -37,15 +37,13 @@ def demo_run():
             elif t >600:
               a[1] = np.maximum(0.,a[1] - (t-60)*0.01)
             
-            state, r, done, _ = env.step(a)
-           
-            rgb_camera = env.render("rgb_array")
-            contacts, rgb_eye = state
+            state, r, done, info_ = env.step(a)
+            
+            still_open = env.render("human")
+            contacts, rgb_eye = (info_["contacts"], info_["rgb_eye"])
 
-            camera_im = Image.fromarray(rgb_camera)
             eye_im = Image.fromarray(rgb_eye)
             
-            camera_im.save("camera_{:04d}.jpg".format(t))
             eye_im.save("eye_{:04d}.jpg".format(t))
 
             if len(contacts)>0:
