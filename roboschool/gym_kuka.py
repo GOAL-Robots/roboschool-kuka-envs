@@ -114,14 +114,18 @@ class RoboschoolKuka(RoboschoolUrdfEnv):
         self.robot_parts_names = [part.name for part 
                 in self.cpp_robot.parts]
         if self.EYE_ENABLE:
-        self.eye = self.scene.cpp_world.new_camera_free_float(self.EYE_W, self.EYE_H, "eye")
+            self.eye = self.scene.cpp_world.new_camera_free_float
+            (self.EYE_W, self.EYE_H, "eye")
         return s
 
     def _render(self, mode, close):
         render_res = super(RoboschoolKuka, self)._render(mode, close)
         self.eye_adjust() 
-        rgb_eye, _, _, _, _ = self.eye.render(False, False, False) # render_depth, render_labeling, print_timing)
-        self.rendered_rgb_eye = np.fromstring(rgb_eye, dtype=np.uint8).reshape( (self.EYE_H,self.EYE_W,3) )
+        
+        # render(render_depth, render_labeling, print_timing))
+        rgb_eye, _, _, _, _ = self.eye.render(False, False, False) 
+        self.rendered_rgb_eye = np.fromstring(rgb_eye, dtype=np.uint8).reshape( 
+                (self.EYE_H,self.EYE_W,3) )
         
         return render_res
 
