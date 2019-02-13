@@ -68,7 +68,7 @@ def GraspRewardFunc(contact_dict, state):
 
     neg_reward = -np.sum([ len([contact for contact in contacts 
         if "table" in contact ]) for part, contacts 
-        in contact_dict.items() ])**2
+        in contact_dict.items() ])**8
     
     obj_pose = state[-3:]
     obj_reward = (finger_reward**6)*(
@@ -141,12 +141,15 @@ class RoboschoolKuka(RoboschoolUrdfEnv):
 
     def _render(self, mode, close):
         render_res = super(RoboschoolKuka, self)._render(mode, close)
-        self.eye_adjust() 
         
-        # render(render_depth, render_labeling, print_timing))
-        rgb_eye, _, _, _, _ = self.eye.render(False, False, False) 
-        self.rendered_rgb_eye = np.fromstring(rgb_eye, dtype=np.uint8).reshape( 
-                (self.EYE_H,self.EYE_W,3) )
+        if(self.EYE_ENABLE):
+        
+            self.eye_adjust() 
+            
+            # render(render_depth, render_labeling, print_timing))
+            rgb_eye, _, _, _, _ = self.eye.render(False, False, False) 
+            self.rendered_rgb_eye = np.fromstring(rgb_eye, dtype=np.uint8).reshape( 
+                    (self.EYE_H,self.EYE_W,3) )
         
         return render_res
 
