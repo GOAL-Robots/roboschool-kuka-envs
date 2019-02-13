@@ -66,7 +66,7 @@ class RoboschoolKuka(RoboschoolUrdfEnv):
     
     EYE_W = 200
     EYE_H = 200
-    EYE_SHOW = True
+
 
     def create_single_player_scene(self):
         return SingleRobotEmptyScene(gravity=9.8, 
@@ -74,7 +74,7 @@ class RoboschoolKuka(RoboschoolUrdfEnv):
 
     def __init__(self):
         action_dim=9
-        obs_dim=11*3
+        obs_dim=12*3
 
         super(RoboschoolKuka, self).__init__(
             "kuka_gripper_description/urdf/kuka_gripper.urdf",
@@ -92,10 +92,7 @@ class RoboschoolKuka(RoboschoolUrdfEnv):
         self.observation_space = gym.spaces.Box(-high, high)
 
         self.rendered_rgb_eye = np.zeros([self.EYE_H, self.EYE_W, 3], dtype=np.uint8)
-        
-        if self.EYE_SHOW:
-            self.eye_window = PygletInteractiveWindow(self, self.EYE_W, self.EYE_H)
-        
+                
         
     def get_contacts(self):
         
@@ -116,21 +113,19 @@ class RoboschoolKuka(RoboschoolUrdfEnv):
         s = super(RoboschoolKuka, self)._reset()
         self.robot_parts_names = [part.name for part 
                 in self.cpp_robot.parts]
-        self.eye = self.scene.cpp_world.new_camera_free_float(self.EYE_W, self.EYE_H, "eye")
+        if self.EYE_ENABLE:
+            self.eye = self.scene.cpp_world.new_camera_free_float(self.EYE_W, self.EYE_H, "eye")
         return s
 
     def _render(self, mode, close):
         render_res = super(RoboschoolKuka, self)._render(mode, close)
-        self.eye_adjust() 
-        rgb_eye, _, _, _, _ = self.eye.render(False, False, False) # render_depth, render_labeling, print_timing)
-        self.rendered_rgb_eye = np.fromstring(rgb_eye, dtype=np.uint8).reshape( (self.EYE_H,self.EYE_W,3) )
-        
-        if self.EYE_SHOW:
+
+        if self.EYE_ENABLE and self.EYE_SHOW:
             self.eye_window.imshow(self.rendered_rgb_eye)
             self.eye_window.each_frame()
    
         return render_res
-
+    
     def robot_specific_reset(self):
          
         pose_robot = cpp_household.Pose()
@@ -160,8 +155,9 @@ class RoboschoolKuka(RoboschoolUrdfEnv):
         kd = 1.0
         vel = 400
     
-        a[-1] = np.minimum(a[-1], np.pi/2 - a[-2])
-        
+        a[-1] = np.minimum(a[-1], np.pi/2 - a[-2])        
+        a[-2:] = np.maximum(0.0, np.minimum(np.pi/2.0, a[-2:]))
+
         for i,j in enumerate(a[:-2]):
             self.jdict["lbr_iiwa_joint_%d"%(i+1)].set_servo_target(
                     j, kp, kd, vel)
@@ -183,13 +179,29 @@ class RoboschoolKuka(RoboschoolUrdfEnv):
 
         state = self.calc_state()
         self.rewards = [ self.get_contacts()]
-        reward = np.sum([ len(contacts) 
-            for part, contacts in self.get_contacts().items() 
-                if part != "table"])
+
+        reward = 0
+
+        contact_dict = self.get_contacts()
         
-        reward -=  np.sum([ len(contacts) 
-            for part, contacts in self.get_contacts().items() 
-                if part == "table"])
+        finger_reward = np.sum([ len([contact for contact in contacts 
+            if not "table" in contact]) for part, contacts 
+            in contact_dict.items() if "finger" in part ])**2
+
+        neg_reward = -np.sum([ len([contact for contact in contacts 
+            if "table" in contact ]) for part, contacts 
+            in contact_dict.items() ])**2
+        
+        obj_pose = state[-3:]
+        obj_reward = (finger_reward**6)*(
+                -0.3 < obj_pose[0] < 0.3 and 
+                -0.3 < obj_pose[1] < 0.3 and
+                 0.8 < obj_pose[2] < 0.9)
+    
+        reward = obj_reward + finger_reward 
+        
+        if self.EYE_ENABLE:
+            self.eye_render()
 
         done = False
         info = {"contacts":self.get_contacts(), "rgb_eye": self.rendered_rgb_eye}
@@ -198,6 +210,7 @@ class RoboschoolKuka(RoboschoolUrdfEnv):
     
     def calc_state(self):
         state = np.hstack([part.pose().xyz() for part in  self.cpp_robot.parts])
+        state = np.hstack([state, self.urdf_cube.root_part.pose().xyz()])
         return state 
 
     def camera_adjust(self): 
@@ -206,6 +219,19 @@ class RoboschoolKuka(RoboschoolUrdfEnv):
         z += 0.3
         self.camera.move_and_look_at(.7, -.7, .8, x, y, z)
     
-    def eye_adjust(self): 
+    def eye_render(self):
+        self.eye_adjust() 
+        rgb_eye, _, _, _, _ = self.eye.render(False, False, False) # render_depth, render_labeling, print_timing)
+        self.rendered_rgb_eye = np.fromstring(rgb_eye, dtype=np.uint8).reshape( (self.EYE_H,self.EYE_W,3) )
+   
+    def set_eyeShow(self, to_show ):
+        self.EYE_SHOW = to_show
+        if(self.EYE_SHOW):
+            self.eye_window = PygletInteractiveWindow(self, self.EYE_W, self.EYE_H)
 
+        
+    def set_eyeEnable(self, to_enable ):
+        self.EYE_ENABLE = to_enable
+      
+    def eye_adjust(self): 
         self.eye.move_and_look_at(0, 0, 1.5, 0, 0, 0)
