@@ -18,7 +18,7 @@ def demo_run():
         [0,    0,    0,  -1.0,  1.0,    0,    0,   .8,    .8],   
         [0,  0.29,   0,  -0.95,  1.0,   0,    0,   .8,    .8],   
         [0,  0.29,   0,  -0.95,  1.0,   0,    0,   .25,   .3]])*np.pi/2.0
-        
+
     env = gym.make("RoboschoolKuka-v0")
     env.unwrapped.EYE_W=32
     env.unwrapped.EYE_H=32
@@ -41,11 +41,11 @@ def demo_run():
               a[1] = np.maximum(0.,a[1] - (t-60)*0.01)
             
             state, r, done, info_ = env.step(a)
-            
+           
             still_open = env.render("human")
             contacts, rgb_eye = (info_["contacts"], info_["rgb_eye"])
 
-            eye_im = Image.fromarray(rgb_eye)      
+            eye_im = Image.fromarray(rgb_eye)          
             eye_im.save("eye_{:04d}.jpg".format(t))
 
             if len(contacts)>0:

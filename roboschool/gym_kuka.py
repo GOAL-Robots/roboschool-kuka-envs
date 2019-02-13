@@ -59,15 +59,15 @@ class PygletInteractiveWindow(pw.Window):
     def each_frame(self):
         self.theta += 0.05 * (self.keys.get(pwk.LEFT, 0) - self.keys.get(pwk.RIGHT, 0))
 
-
 #------------------------------------------------------------------------------
+
 
 class RoboschoolKuka(RoboschoolUrdfEnv):
     
     EYE_W = 200
     EYE_H = 200
 
-
+    
     def create_single_player_scene(self):
         return SingleRobotEmptyScene(gravity=9.8, 
                 timestep=0.0165, frame_skip=1)
@@ -81,7 +81,7 @@ class RoboschoolKuka(RoboschoolUrdfEnv):
             "pelvis",
             action_dim=action_dim, obs_dim=obs_dim,
             fixed_base=False,
-            self_collision=True) 
+            self_collision=True)
 
         fixed_base=False
         self_collision=True
@@ -92,7 +92,7 @@ class RoboschoolKuka(RoboschoolUrdfEnv):
         self.observation_space = gym.spaces.Box(-high, high)
 
         self.rendered_rgb_eye = np.zeros([self.EYE_H, self.EYE_W, 3], dtype=np.uint8)
-                
+        
         
     def get_contacts(self):
         
@@ -114,18 +114,17 @@ class RoboschoolKuka(RoboschoolUrdfEnv):
         self.robot_parts_names = [part.name for part 
                 in self.cpp_robot.parts]
         if self.EYE_ENABLE:
-            self.eye = self.scene.cpp_world.new_camera_free_float(self.EYE_W, self.EYE_H, "eye")
+        self.eye = self.scene.cpp_world.new_camera_free_float(self.EYE_W, self.EYE_H, "eye")
         return s
 
     def _render(self, mode, close):
         render_res = super(RoboschoolKuka, self)._render(mode, close)
-
-        if self.EYE_ENABLE and self.EYE_SHOW:
-            self.eye_window.imshow(self.rendered_rgb_eye)
-            self.eye_window.each_frame()
-   
+        self.eye_adjust() 
+        rgb_eye, _, _, _, _ = self.eye.render(False, False, False) # render_depth, render_labeling, print_timing)
+        self.rendered_rgb_eye = np.fromstring(rgb_eye, dtype=np.uint8).reshape( (self.EYE_H,self.EYE_W,3) )
+        
         return render_res
-    
+
     def robot_specific_reset(self):
          
         pose_robot = cpp_household.Pose()
@@ -155,9 +154,9 @@ class RoboschoolKuka(RoboschoolUrdfEnv):
         kd = 1.0
         vel = 400
     
-        a[-1] = np.minimum(a[-1], np.pi/2 - a[-2])        
+        a[-1] = np.minimum(a[-1], np.pi/2 - a[-2])
         a[-2:] = np.maximum(0.0, np.minimum(np.pi/2.0, a[-2:]))
-
+        
         for i,j in enumerate(a[:-2]):
             self.jdict["lbr_iiwa_joint_%d"%(i+1)].set_servo_target(
                     j, kp, kd, vel)
