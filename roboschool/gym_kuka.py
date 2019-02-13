@@ -61,6 +61,25 @@ class PygletInteractiveWindow(pw.Window):
 
 #------------------------------------------------------------------------------
 
+def GraspRewardFunc(contact_dict, state):
+    finger_reward = np.sum([ len([contact for contact in contacts 
+        if not "table" in contact]) for part, contacts 
+        in contact_dict.items() if "finger" in part ])**2
+
+    neg_reward = -np.sum([ len([contact for contact in contacts 
+        if "table" in contact ]) for part, contacts 
+        in contact_dict.items() ])**2
+    
+    obj_pose = state[-3:]
+    obj_reward = (finger_reward**6)*(
+            -0.3 < obj_pose[0] < 0.3 and 
+            -0.3 < obj_pose[1] < 0.3 and
+                0.8 < obj_pose[2] < 0.9)
+
+    return obj_reward + finger_reward 
+
+
+
 
 class RoboschoolKuka(RoboschoolUrdfEnv):
     
@@ -92,6 +111,8 @@ class RoboschoolKuka(RoboschoolUrdfEnv):
         self.observation_space = gym.spaces.Box(-high, high)
 
         self.rendered_rgb_eye = np.zeros([self.EYE_H, self.EYE_W, 3], dtype=np.uint8)
+
+        self.reward_func = GraspRewardFunc
         
         
     def get_contacts(self):
@@ -186,22 +207,7 @@ class RoboschoolKuka(RoboschoolUrdfEnv):
         reward = 0
 
         contact_dict = self.get_contacts()
-        
-        finger_reward = np.sum([ len([contact for contact in contacts 
-            if not "table" in contact]) for part, contacts 
-            in contact_dict.items() if "finger" in part ])**2
-
-        neg_reward = -np.sum([ len([contact for contact in contacts 
-            if "table" in contact ]) for part, contacts 
-            in contact_dict.items() ])**2
-        
-        obj_pose = state[-3:]
-        obj_reward = (finger_reward**6)*(
-                -0.3 < obj_pose[0] < 0.3 and 
-                -0.3 < obj_pose[1] < 0.3 and
-                 0.8 < obj_pose[2] < 0.9)
-    
-        reward = obj_reward + finger_reward 
+        reward = self.reward_func(contact_dict, state)
         
         if self.EYE_ENABLE:
             self.eye_render()
