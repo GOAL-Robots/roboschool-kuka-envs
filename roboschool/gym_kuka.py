@@ -92,22 +92,26 @@ class RoboschoolKuka(RoboschoolUrdfEnv):
                 timestep=0.0165, frame_skip=1)
 
     def __init__(self):
-        action_dim=9
-        obs_dim=12*3
+        
+        self.action_dim = 9
+        self.obs_dim = 12*3
 
         super(RoboschoolKuka, self).__init__(
             "kuka_gripper_description/urdf/kuka_gripper.urdf",
             "pelvis",
-            action_dim=action_dim, obs_dim=obs_dim,
+            action_dim=self.action_dim, obs_dim=self.obs_dim,
             fixed_base=False,
             self_collision=True)
 
         fixed_base=False
         self_collision=True
 
-        high = np.pi*np.ones([action_dim])
-        self.action_space = gym.spaces.Box(-high, high)
-        high = np.inf*np.ones([obs_dim])
+        low = -0.75*np.pi*np.ones([self.action_dim])
+        low[-2:] = 0
+        high = 0.75*np.pi*np.ones([self.action_dim])
+
+        self.action_space = gym.spaces.Box(low, high)
+        high = np.inf*np.ones([self.obs_dim])
         self.observation_space = gym.spaces.Box(-high, high)
 
         self.rendered_rgb_eye = np.zeros([self.EYE_H, self.EYE_W, 3], dtype=np.uint8)
@@ -183,10 +187,10 @@ class RoboschoolKuka(RoboschoolUrdfEnv):
         kp = 0.1
         kd = 1.0
         vel = 400
-    
-        a[-1] = np.minimum(a[-1], np.pi/2 - a[-2])
-        a[-2:] = np.maximum(0.0, np.minimum(np.pi/2.0, a[-2:]))
-        
+
+        a[:-2] = np.maximum(-np.pi*0.75, np.minimum(np.pi*0.75, a[:7]))
+        a[7:]  = np.maximum(          0, np.minimum(np.pi*0.75, a[7:]))
+         
         for i,j in enumerate(a[:-2]):
             self.jdict["lbr_iiwa_joint_%d"%(i+1)].set_servo_target(
                     j, kp, kd, vel)
@@ -246,6 +250,8 @@ class RoboschoolKuka(RoboschoolUrdfEnv):
         
     def set_eyeEnable(self, to_enable ):
         self.EYE_ENABLE = to_enable
+        if not self.EYE_ENABLE: 
+            self.EYE_SHOW = self.EYE_ENABLE
       
     def eye_adjust(self): 
         self.eye.move_and_look_at(0, 0, 1.5, 0, 0, 0)

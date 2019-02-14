@@ -258,7 +258,7 @@
     <link name="base">
         <inertial>
             <origin rpy="0 0 0" xyz="0 0 0"/>
-            <mass value="0.5"/>
+            <mass value="2.0"/>
             <inertia ixx="0.0" ixy="0" ixz="0" iyy="0.0" iyz="0" izz="0.0"/>
         </inertial>
         <visual>
@@ -287,7 +287,7 @@
     <link name="finger_00">
         <inertial>
             <origin rpy="0 0 0" xyz="0 0 0"/>
-            <mass value="0.5"/>
+            <mass value="2.0"/>
             <inertia ixx="0.1" ixy="0" ixz="0" iyy="0.09" iyz="0" izz="0.02"/>
         </inertial>
         <visual>
@@ -316,7 +316,7 @@
     <link name="finger_01">
         <inertial>
             <origin rpy="0 0 0" xyz="0 0 0"/>
-            <mass value="0.5"/>
+            <mass value="2.0"/>
             <inertia ixx="0.1" ixy="0" ixz="0" iyy="0.09" iyz="0" izz="0.02"/>
         </inertial>
         <visual>
@@ -350,7 +350,7 @@
     <link name="finger_10">
         <inertial>
             <origin rpy="0 0 0" xyz="0 0 0.02"/>
-            <mass value="0.5"/>
+            <mass value="2.0"/>
             <inertia ixx="0.1" ixy="0" ixz="0" iyy="0.09" iyz="0" izz="0.02"/>
         </inertial>
         <visual>
@@ -379,7 +379,7 @@
     <link name="finger_11">
         <inertial>
             <origin rpy="0 0 0" xyz="0 0 0"/>
-            <mass value="0.5"/>
+            <mass value="2.0"/>
             <inertia ixx="0.1" ixy="0" ixz="0" iyy="0.09" iyz="0" izz="0.02"/>
         </inertial>
         <visual>
