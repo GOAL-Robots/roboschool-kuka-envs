@@ -5,7 +5,7 @@
     <visual>
         <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <box size="0.1 0.1 0.1"/>
+        <box size="0.06 0.06 0.06"/>
       </geometry>
       <material name="solid_color">
         <color rgba="0.6 0.3 0 1"/>
@@ -14,12 +14,12 @@
 
     <collision>
       <geometry>
-        <box size="0.1 0.1 0.1"/>
+        <box size="0.06 0.06 0.06"/>
       </geometry>
     </collision>
 
     <inertial>
-      <mass value="1.0"/>
+      <mass value="0.6"/>
       <inertia ixx="0.001" iyy="0.001" izz="0.001"/>  <!-- I = m * l^2 / 6 -->
     </inertial>
   </link>
