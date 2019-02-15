@@ -176,9 +176,9 @@ class RoboschoolKuka(RoboschoolUrdfEnv):
         kd = 1.0
         vel = 400
 
-        a[:-2]  = np.maximum(-np.pi*0.75, np.minimum(np.pi*0.75,         a[:-2]))
-        a[-2:]  = np.maximum(          0, np.minimum(np.pi*0.75,         a[-2:]))
-        a[-1]  = np.maximum(          0, np.minimum(2*a[-2],             a[-1]))
+        a[:-2]  = np.maximum(-np.pi*0.75, np.minimum(np.pi*0.75, a[:-2]))
+        a[-2:]  = np.maximum(          0, np.minimum(np.pi*0.75, a[-2:]))
+        a[-1]  = np.maximum(           0, np.minimum(2*a[-2],    a[-1]))
   
         for i,j in enumerate(a[:-2]):
             self.jdict["lbr_iiwa_joint_%d"%(i+1)].set_servo_target(
