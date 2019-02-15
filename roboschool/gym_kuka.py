@@ -61,27 +61,13 @@ class PygletInteractiveWindow(pw.Window):
 
 #------------------------------------------------------------------------------
 
-def GraspRewardFunc(contact_dict, state):
-    finger_reward = np.sum([ len([contact for contact in contacts 
+def DefaultRewardFunc(contact_dict, state):
+    
+    finger_touch = np.sum([ len([contact for contact in contacts 
         if not "table" in contact]) for part, contacts 
         in contact_dict.items() if "finger" in part ])
 
-    fingers_reward = len(np.unique(contact_dict.keys()))
-
-    neg_reward = -np.sum([ len([contact for contact in contacts 
-        if "table" in contact ]) for part, contacts 
-        in contact_dict.items() ])
-    
-    obj_pose = state[-3:]
-    obj_reward = (
-            -0.3 < obj_pose[0] < 0.3 and 
-            -0.3 < obj_pose[1] < 0.3 and
-                0.8 < obj_pose[2] < 0.9)
-
-    return neg_reward*0.5 + obj_reward**4 + finger_reward**6 + fingers_reward**6 + obj_reward*finger_reward**4
-
-
-
+    return finger_touch
 
 class RoboschoolKuka(RoboschoolUrdfEnv):
     
@@ -118,7 +104,7 @@ class RoboschoolKuka(RoboschoolUrdfEnv):
 
         self.rendered_rgb_eye = np.zeros([self.EYE_H, self.EYE_W, 3], dtype=np.uint8)
 
-        self.reward_func = GraspRewardFunc
+        self.reward_func = DefaultRewardFunc
         self.EYE_ENABLE = False
         self.EYE_SHOW = False
         
@@ -190,9 +176,10 @@ class RoboschoolKuka(RoboschoolUrdfEnv):
         kd = 1.0
         vel = 400
 
-        a[:-2] = np.maximum(-np.pi*0.75, np.minimum(np.pi*0.75, a[:7]))
-        a[7:]  = np.maximum(          0, np.minimum(np.pi*0.75, a[7:]))
-         
+        a[:-2]  = np.maximum(-np.pi*0.75, np.minimum(np.pi*0.75,         a[:-2]))
+        a[-2:]  = np.maximum(          0, np.minimum(np.pi*0.75,         a[-2:]))
+        a[-1]  = np.maximum(          0, np.minimum(2*a[-2],             a[-1]))
+  
         for i,j in enumerate(a[:-2]):
             self.jdict["lbr_iiwa_joint_%d"%(i+1)].set_servo_target(
                     j, kp, kd, vel)
