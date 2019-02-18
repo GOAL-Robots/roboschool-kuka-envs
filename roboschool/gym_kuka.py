@@ -77,7 +77,7 @@ class RoboschoolKuka(RoboschoolUrdfEnv):
     
     def create_single_player_scene(self):
         return SingleRobotEmptyScene(gravity=9.8, 
-                timestep=0.0165, frame_skip=1)
+                timestep=0.01, frame_skip=1)
 
     def __init__(self):
         
