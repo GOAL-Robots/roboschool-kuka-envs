@@ -69,7 +69,7 @@ def DefaultRewardFunc(contact_dict, state):
 
     return finger_touch
 
-class RoboschoolKuka(RoboschoolUrdfEnv):
+class RoboschoolKukaObjects(RoboschoolUrdfEnv):
     
     EYE_W = 200
     EYE_H = 200
@@ -84,7 +84,7 @@ class RoboschoolKuka(RoboschoolUrdfEnv):
         self.action_dim = 9
         self.obs_dim = 12*3
 
-        super(RoboschoolKuka, self).__init__(
+        super(RoboschoolKukaObjects, self).__init__(
             "kuka_gripper_description/urdf/kuka_gripper.urdf",
             "pelvis",
             action_dim=self.action_dim, obs_dim=self.obs_dim,
@@ -125,7 +125,7 @@ class RoboschoolKuka(RoboschoolUrdfEnv):
         return contact_dict
    
     def _reset(self):
-        s = super(RoboschoolKuka, self)._reset()
+        s = super(RoboschoolKukaObjects, self)._reset()
         self.robot_parts_names = [part.name for part 
                 in self.cpp_robot.parts]
         if self.EYE_ENABLE:
@@ -134,7 +134,7 @@ class RoboschoolKuka(RoboschoolUrdfEnv):
         return s
 
     def _render(self, mode, close):
-        render_res = super(RoboschoolKuka, self)._render(mode, close)
+        render_res = super(RoboschoolKukaObjects, self)._render(mode, close)
         
         if(self.EYE_ENABLE):
         
@@ -160,14 +160,22 @@ class RoboschoolKuka(RoboschoolUrdfEnv):
                 "kuka_gripper_description/urdf/table.urdf"),
             pose_table, True, True)
         
-        # add cube
-        pose_cube = cpp_household.Pose()
-        pose_cube.set_xyz(0.0, 0, 0.482)
-        self.urdf_cube  = self.scene.cpp_world.load_urdf(
+        # add tomato_soup_can
+        pose_tomato = cpp_household.Pose()
+        pose_tomato.set_xyz(0.1, 0.1, 0.5)
+        self.urdf_tomato  = self.scene.cpp_world.load_urdf(
             os.path.join(os.path.dirname(__file__), "models_robot",
-                "kuka_gripper_description/urdf/cube.urdf"),
-            pose_cube, False, True)
-                
+                "kuka_gripper_description/urdf/tomato_soup_can.urdf"),
+            pose_tomato, False, True)
+
+        # add tomato_soup_can
+        pose_banana = cpp_household.Pose()
+        pose_banana.set_xyz(0., 0., .4)
+        self.urdf_banana  = self.scene.cpp_world.load_urdf(
+            os.path.join(os.path.dirname(__file__), "models_robot",
+                "kuka_gripper_description/urdf/banana.urdf"),
+            pose_banana, False, True)
+
     def apply_action(self, a):
 
         assert(len(a) == 9)
@@ -217,7 +225,6 @@ class RoboschoolKuka(RoboschoolUrdfEnv):
     
     def calc_state(self):
         state = np.hstack([part.pose().xyz() for part in  self.cpp_robot.parts])
-        state = np.hstack([state, self.urdf_cube.root_part.pose().xyz()])
         return state 
 
     def camera_adjust(self): 
