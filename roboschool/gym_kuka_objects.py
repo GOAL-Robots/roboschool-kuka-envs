@@ -168,13 +168,21 @@ class RoboschoolKukaObjects(RoboschoolUrdfEnv):
                 "kuka_gripper_description/urdf/tomato_soup_can.urdf"),
             pose_tomato, False, True)
 
-        # add tomato_soup_can
+        # add banana
         pose_banana = cpp_household.Pose()
         pose_banana.set_xyz(0., 0., .4)
         self.urdf_banana  = self.scene.cpp_world.load_urdf(
             os.path.join(os.path.dirname(__file__), "models_robot",
                 "kuka_gripper_description/urdf/banana.urdf"),
             pose_banana, False, True)
+
+        # add hammer
+        pose_hammer = cpp_household.Pose()
+        pose_hammer.set_xyz(-0.1, -0.1, .4)
+        self.urdf_hammer  = self.scene.cpp_world.load_urdf(
+            os.path.join(os.path.dirname(__file__), "models_robot",
+                "kuka_gripper_description/urdf/hammer.urdf"),
+            pose_hammer, False, True)
 
     def apply_action(self, a):
 
