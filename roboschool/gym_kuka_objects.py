@@ -162,7 +162,7 @@ class RoboschoolKukaObjects(RoboschoolUrdfEnv):
         
         # add tomato_soup_can
         pose_tomato = cpp_household.Pose()
-        pose_tomato.set_xyz(0.1, 0.1, 0.5)
+        pose_tomato.set_xyz(0.3, 0.3, 0.5)
         self.urdf_tomato  = self.scene.cpp_world.load_urdf(
             os.path.join(os.path.dirname(__file__), "models_robot",
                 "kuka_gripper_description/urdf/tomato_soup_can.urdf"),
@@ -178,7 +178,7 @@ class RoboschoolKukaObjects(RoboschoolUrdfEnv):
 
         # add hammer
         pose_hammer = cpp_household.Pose()
-        pose_hammer.set_xyz(-0.1, -0.1, .4)
+        pose_hammer.set_xyz(0.2, -0.1, .25)
         self.urdf_hammer  = self.scene.cpp_world.load_urdf(
             os.path.join(os.path.dirname(__file__), "models_robot",
                 "kuka_gripper_description/urdf/hammer.urdf"),

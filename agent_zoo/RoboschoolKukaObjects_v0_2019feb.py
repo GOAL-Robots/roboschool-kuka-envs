@@ -8,8 +8,8 @@ def demo_run():
    
 
     env = gym.make("RoboschoolKuka-v1")
-    env.unwrapped.set_eyeEnable = False
-    env.unwrapped.set_eyeShow = False
+    env.unwrapped.set_eyeEnable(False)
+    env.unwrapped.set_eyeShow(False)
 
 
     obs = env.reset()    

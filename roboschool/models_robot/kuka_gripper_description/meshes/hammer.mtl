@@ -14,7 +14,7 @@ map_Kd hammer.png
 map_Ka hammer.png
 map_Ke hammer.png
 
-newmtl Material_hammer.png
+newmtl Material_hammer.png.002
 Ns 96.078431
 Ka 1.000000 1.000000 1.000000
 Kd 0.640000 0.640000 0.640000
