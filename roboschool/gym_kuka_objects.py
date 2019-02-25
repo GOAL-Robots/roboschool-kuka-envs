@@ -184,6 +184,22 @@ class RoboschoolKukaObjects(RoboschoolUrdfEnv):
                 "kuka_gripper_description/urdf/hammer.urdf"),
             pose_hammer, False, True)
 
+        # add orange
+        pose_orange = cpp_household.Pose()
+        pose_orange.set_xyz(0.2, -0.35, .25)
+        self.urdf_orange  = self.scene.cpp_world.load_urdf(
+            os.path.join(os.path.dirname(__file__), "models_robot",
+                "kuka_gripper_description/urdf/orange.urdf"),
+            pose_orange, False, True)
+
+        # add mustard
+        pose_mustard = cpp_household.Pose()
+        pose_mustard.set_xyz(-0.2, -0.35, .25)
+        self.urdf_mustard  = self.scene.cpp_world.load_urdf(
+            os.path.join(os.path.dirname(__file__), "models_robot",
+                "kuka_gripper_description/urdf/mustard.urdf"),
+            pose_mustard, False, True)
+
     def apply_action(self, a):
 
         assert(len(a) == 9)
