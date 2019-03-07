@@ -170,7 +170,7 @@ class RoboschoolKukaObjects(RoboschoolUrdfEnv):
 
         # add banana
         pose_banana = cpp_household.Pose()
-        pose_banana.set_xyz(0., 0., .4)
+        pose_banana.set_xyz(0., 0., .32)
         self.urdf_banana  = self.scene.cpp_world.load_urdf(
             os.path.join(os.path.dirname(__file__), "models_robot",
                 "kuka_gripper_description/urdf/banana.urdf"),
@@ -186,7 +186,7 @@ class RoboschoolKukaObjects(RoboschoolUrdfEnv):
 
         # add orange
         pose_orange = cpp_household.Pose()
-        pose_orange.set_xyz(0.2, -0.35, .25)
+        pose_orange.set_xyz(0.2, -0.35, .3)
         self.urdf_orange  = self.scene.cpp_world.load_urdf(
             os.path.join(os.path.dirname(__file__), "models_robot",
                 "kuka_gripper_description/urdf/orange.urdf"),
@@ -266,12 +266,11 @@ class RoboschoolKukaObjects(RoboschoolUrdfEnv):
         self.EYE_SHOW = to_show
         if(self.EYE_SHOW):
             self.eye_window = PygletInteractiveWindow(self, self.EYE_W, self.EYE_H)
-
-        
+ 
     def set_eyeEnable(self, to_enable ):
         self.EYE_ENABLE = to_enable
         if not self.EYE_ENABLE: 
             self.EYE_SHOW = self.EYE_ENABLE
-      
+    
     def eye_adjust(self): 
-        self.eye.move_and_look_at(0, 0, 1.5, 0, 0, 0)
+        self.eye.move_and_look_at(0, 0, 1.5, 0, 0, 0) 

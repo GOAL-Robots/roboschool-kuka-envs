@@ -6,17 +6,18 @@ import time
 
 def demo_run():
    
-
+    :q
     env = gym.make("RoboschoolKuka-v1")
     env.unwrapped.set_eyeEnable(False)
     env.unwrapped.set_eyeShow(False)
 
 
-    obs = env.reset()    
     while True:
-        a = np.zeros(9) 
-        state, r, done, info_ = env.step(a)
-        still_open = env.render("human")
+        obs = env.reset()    
+        for t in range(500):
+            a = np.zeros(9) 
+            state, r, done, info_ = env.step(a)
+            still_open = env.render("human")
         
              
 if __name__=="__main__":

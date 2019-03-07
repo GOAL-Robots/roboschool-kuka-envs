@@ -71,8 +71,8 @@ def DefaultRewardFunc(contact_dict, state):
 
 class RoboschoolKuka(RoboschoolUrdfEnv):
     
-    EYE_W = 200
-    EYE_H = 200
+    EYE_W = 20
+    EYE_H = 20
 
     
     def create_single_player_scene(self):
