@@ -13,8 +13,8 @@ class RoboschoolUrdfEnv(gym.Env):
         'video.frames_per_second': 60
         }
 
-    VIDEO_W = 640  # for video showing the robot, not for camera ON the robot
-    VIDEO_H = 480
+    VIDEO_W = 600  # for video showing the robot, not for camera ON the robot
+    VIDEO_H = 400
 
     def __init__(self, model_urdf, robot_name, action_dim, obs_dim, fixed_base, self_collision):
         self.scene = None

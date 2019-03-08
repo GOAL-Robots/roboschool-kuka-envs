@@ -170,7 +170,7 @@ class RoboschoolKukaObjects(RoboschoolUrdfEnv):
 
         # add banana
         pose_banana = cpp_household.Pose()
-        pose_banana.set_xyz(0., 0., .32)
+        pose_banana.set_xyz(0., 0., .35)
         self.urdf_banana  = self.scene.cpp_world.load_urdf(
             os.path.join(os.path.dirname(__file__), "models_robot",
                 "kuka_gripper_description/urdf/banana.urdf"),
@@ -194,7 +194,7 @@ class RoboschoolKukaObjects(RoboschoolUrdfEnv):
 
         # add mustard
         pose_mustard = cpp_household.Pose()
-        pose_mustard.set_xyz(-0.2, -0.35, .25)
+        pose_mustard.set_xyz(-0.2, -0.35, .3)
         self.urdf_mustard  = self.scene.cpp_world.load_urdf(
             os.path.join(os.path.dirname(__file__), "models_robot",
                 "kuka_gripper_description/urdf/mustard.urdf"),
